@@ -1,2 +1,1237 @@
-# thiwillshome
-https://borhan-1.github.io/thiwillshome/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TheWillsHome Development Ltd.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Playfair+Display:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #004d40;
+      --secondary-color: #00b894;
+      --text-color: #333;
+      --bg-color: #a9a9a9;
+      --accent-color: #ffd700;
+      --neon-blue: #00f0ff;
+      --glow-color: rgba(200, 200, 200, 0.5);
+      --gray-dark: #333;
+      --gray-medium: #555;
+      --gray-light: #888;
+      --gray-lighter: #ccc;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      line-height: 1.6; 
+      color: var(--text-color); 
+      scroll-behavior: smooth; 
+      background: var(--bg-color); 
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #000, #111);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 9px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.3s, transform 0.3s;
+      height: 82px;
+    }
+    header.scrolled { background: rgba(0,0,0,0.6); transform: translateY(0); }
+    header img { height: 76px; width: auto; transition: transform 0.3s ease; }
+    header img:hover { transform: rotate(5deg) scale(1.05); }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 9px;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s ease, transform 0.3s ease;
+      font-size: 1.05rem;
+      font-family: 'Playfair Display', serif;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0; height: 2px;
+      background: var(--accent-color);
+      bottom: -6px; left: 0;
+      transition: width 0.3s ease;
+    }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+    nav a:hover, nav a.active { color: var(--accent-color); transform: translateY(-2px); }
+
+    .menu-toggle { display: none; font-size: 24px; cursor: pointer; transition: transform 0.3s; color: #fff; }
+    .menu-toggle:hover { transform: rotate(90deg); }
+
+    /* Slider - Full screen with margin below header */
+    .slider {
+      position: relative;
+      width: 100%;
+      background: #000;
+      overflow: hidden;
+      height: calc(100vh - 82px);
+      margin-top: 82px;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      display: grid;
+      place-items: center;
+      transition: opacity 700ms ease, transform 1s ease-in-out;
+      color: #fff;
+      text-align: center;
+      transform: scale(1);
+    }
+    .slide.active { 
+      opacity: 1; 
+      transform: scale(1.05);
+    }
+
+    .slide picture, .slide img { width: 100%; height: 100%; }
+    .slide img {
+      width: 100%;
+      height: 550px;
+      object-fit: cover;
+      object-position: center;
+      background: #000;
+      image-rendering: auto;
+      display: block;
+      transition: transform 5s ease;
+    }
+    .slide.active img { transform: scale(1.1); }
+
+    .slide .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: fadeInUp 1s ease;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+    }
+
+    .slide-caption { 
+      font-size: clamp(1.8rem, 3.5vw, 3.2rem); 
+      font-family: 'Playfair Display', serif; 
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      margin-bottom: 10px;
+      animation: fadeInUp 1s ease;
+    }
+    .slide-subcaption { 
+      font-size: clamp(1.2rem, 2vw, 1.8rem); 
+      opacity: 0.95;
+      animation: fadeInUp 1.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px) translate(-50%, -50%); }
+      to { opacity: 1; transform: translateY(0) translate(-50%, -50%); }
+    }
+
+    .slider-controls {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+    .slider-controls button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .slider-controls button.active { background: var(--accent-color); }
+    .slider-controls button:hover { transform: scale(1.2); }
+
+    .slider-arrows {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+    .slider-arrows button {
+      background: rgba(0,0,0,0.45);
+      border: none;
+      color: #fff;
+      font-size: 1.6rem;
+      cursor: pointer;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.25s;
+    }
+    .slider-arrows button:hover { background: var(--secondary-color); }
+
+    /* Sections - Full width with minimal padding */
+    section { 
+      width: 100%;
+      opacity: 0; 
+      transform: translateY(40px) scale(0.95); 
+      transition: opacity .6s ease, transform .6s ease; 
+    }
+    section.visible { opacity: 1; transform: translateY(0) scale(1); }
+    
+    .content-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 15px;
+    }
+    
+    section h2 { 
+      font-size: clamp(1.6rem, 3vw, 2.6rem); 
+      margin-bottom: 18px; 
+      color: #111; 
+      border-bottom: 4px solid var(--accent-color); 
+      display: inline-block; 
+      padding-bottom: 8px; 
+      font-family: 'Orbitron', sans-serif; 
+      text-shadow: 0 0 8px var(--neon-blue);
+      position: relative;
+    }
+    section h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 50%;
+      height: 2px;
+      background: var(--secondary-color);
+      transition: width 0.5s;
+    }
+    section:hover h2::after { width: 100%; }
+    section p { font-size: 1.15rem; color: #444; max-width: 900px; margin: 0; line-height: 1.8; }
+    .underline-solid { width: 90px; height: 3px; background: var(--accent-color); margin: 10px 0 5px; }
+    .underline-dashed { width: 90px; height: 3px; border: none; border-top: 2px dashed var(--secondary-color); margin: 5px 0; }
+
+    /* Parallax - Full screen */
+    .parallax { 
+      width: 100%;
+      height: 100vh;
+      background-attachment: fixed; 
+      background-size: cover; 
+      background-position: center; 
+      display: grid; 
+      place-items: center; 
+      color: #fff; 
+      text-align: center; 
+      position: relative; 
+      opacity: 0; 
+      transform: translateY(40px); 
+      transition: opacity .6s ease, transform .6s ease; 
+    }
+    .parallax.visible { opacity: 1; transform: translateY(0); }
+    .parallax::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+    .parallax-content { 
+      position: relative; 
+      z-index: 1; 
+      font-size: clamp(1.2rem, 2.4vw, 2rem); 
+      font-family: 'Playfair Display', serif;
+      padding: 0 15px;
+      max-width: 1200px;
+      margin: 0 auto;
+      animation: fadeInUp 1s ease;
+    }
+
+    /* Gallery - Full width with minimal padding */
+    #projects .filter-buttons, #gallery .filter-buttons { 
+      text-align: left;
+      margin-bottom: 24px; 
+    }
+    .filter-buttons button { 
+      background: transparent; 
+      border: 2px solid var(--secondary-color); 
+      padding: 10px 20px; 
+      margin: 0 8px 8px 0;
+      border-radius: 28px; 
+      cursor: pointer; 
+      transition: background 0.3s, color 0.3s, transform 0.3s; 
+      font-weight: 500; 
+    }
+    .filter-buttons button.active, .filter-buttons button:hover { 
+      background: var(--secondary-color); 
+      color: #fff; 
+      transform: translateY(-3px); 
+    }
+
+    .gallery-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      gap: 15px;
+    }
+    .gallery-item { 
+      position: relative; 
+      border-radius: 14px; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15); 
+      transition: transform .4s ease, box-shadow .4s ease, opacity .6s ease; 
+      cursor: pointer; 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    .gallery-item.visible { opacity: 1; transform: translateY(0); }
+    .gallery-item:hover { 
+      transform: translateY(-10px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+    }
+    .gallery-item .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px 14px 0 0;
+    }
+    .gallery-item img { 
+      width: 100%; 
+      height: 300px; 
+      object-fit: cover; 
+      transition: transform .6s ease; 
+      display: block; 
+    }
+    .gallery-item:hover img { transform: scale(1.15) rotate(2deg); }
+    .gallery-item .overlay { 
+      position: absolute; 
+      inset: auto 0 0; 
+      background: linear-gradient(to top, rgba(0,0,0,0.75), transparent); 
+      color: #fff; 
+      padding: 16px; 
+      font-family: 'Playfair Display', serif;
+      transform: translateY(100%);
+      transition: transform 0.5s ease;
+    }
+    .gallery-item:hover .overlay { transform: translateY(0); }
+
+    /* Download Section */
+    .gallery-item .download-section {
+      padding: 10px;
+      text-align: center;
+      background: #333333;
+      border-top: 1px solid var(--gray-lighter);
+      border-radius: 0 0 14px 14px;
+    }
+    .gallery-item .download-btn {
+      background-color: #282828;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: background-color 0.3s, transform 0.3s;
+      display: inline-block;
+    }
+    .gallery-item .download-btn:hover {
+      background-color: #000000;
+      transform: translateY(-2px);
+    }
+
+    /* Gallery Carousel Styles */
+    .gallery-carousel { 
+      position: relative; 
+      overflow: hidden; 
+      width: 100%; 
+    }
+    .gallery-carousel.show-all {
+      overflow: visible;
+    }
+    .gallery-carousel.show-all .gallery-track {
+      flex-wrap: wrap;
+      transform: translateX(0) !important;
+    }
+    .gallery-carousel.show-all .gallery-slide {
+      flex: 0 0 20%;
+      min-width: 20%;
+    }
+    .gallery-track { 
+      display: flex; 
+      transition: transform 0.5s ease; 
+      touch-action: pan-y; 
+      position: relative;
+    }
+    .gallery-track.dragging { transition: none; cursor: grabbing; }
+    .gallery-slide { 
+      flex: 0 0 20%; 
+      min-width: 20%; 
+      padding: 0 5px;
+      box-sizing: border-box; 
+    }
+    .gallery-slide img { 
+      width: 100%; 
+      height: 100%; 
+      border-radius: 14px; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15); 
+      cursor: pointer; 
+      transition: transform 0.3s; 
+    }
+    .gallery-slide img:hover { transform: scale(1.05); }
+
+    /* Gallery Buttons */
+    .gallery-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 15px;
+    }
+    .gallery-buttons button, .carousel-nav button {
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      text-transform: uppercase;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-buttons button:hover, .carousel-nav button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    .gallery-buttons button::before, .carousel-nav button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.4s;
+    }
+    .gallery-buttons button:hover::before, .carousel-nav button:hover::before {
+      left: 100%;
+    }
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+    }
+    .carousel-nav button {
+      padding: 10px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Lightbox */
+    .lightbox { 
+      display: none; 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.9); 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 2000; 
+      opacity: 0; 
+      transition: opacity .4s ease; 
+    }
+    .lightbox.active { display: flex; opacity: 1; }
+    .lightbox img { 
+      max-width: 92%; 
+      max-height: 92%; 
+      border-radius: 10px; 
+      box-shadow: 0 0 20px rgba(255,255,255,0.4);
+      transform: scale(0.8);
+      transition: transform 0.5s ease;
+    }
+    .lightbox.active img { transform: scale(1); }
+    .lightbox-close { 
+      position: absolute; 
+      top: 18px; 
+      right: 18px; 
+      color: #fff; 
+      font-size: 2rem; 
+      cursor: pointer; 
+      transition: transform 0.3s;
+    }
+    .lightbox-close:hover { transform: rotate(45deg); }
+    .lightbox-prev, .lightbox-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.45);
+      border: none;
+      color: #fff;
+      font-size: 1.6rem;
+      cursor: pointer;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.25s;
+      display: none;
+    }
+    .lightbox-prev { left: 20px; }
+    .lightbox-next { right: 20px; }
+    .lightbox-prev:hover, .lightbox-next:hover { background: var(--secondary-color); }
+
+    /* Contact - Full width with minimal padding */
+    #contact { 
+      width: 100%;
+      background: linear-gradient(135deg, var(--gray-dark), var(--gray-medium)); 
+      position: relative; 
+      overflow: hidden; 
+    }
+    #contact::before { 
+      content: ''; 
+      position: absolute; 
+      top: -50%; 
+      left: -50%; 
+      width: 200%; 
+      height: 200%; 
+      background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%); 
+      opacity: 0.3; 
+      animation: holographic 15s infinite; 
+    }
+    @keyframes holographic { 
+      0% { transform: scale(1) rotate(0); opacity: .3; } 
+      50% { transform: scale(1.3) rotate(45deg); opacity: .5; } 
+      100% { transform: scale(1) rotate(0); opacity: .3; } 
+    }
+
+    #contact .contact-container { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 20px;
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 60px 15px;
+    }
+    #contact h2 { 
+      color: #fff; 
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem); 
+      font-weight: 700; 
+      text-shadow: 0 0 15px var(--gray-lighter); 
+      font-family: 'Orbitron', sans-serif; 
+    }
+
+    #contact form, #contact .contact-info { 
+      background: rgba(50, 50, 50, 0.35); 
+      backdrop-filter: blur(10px); 
+      padding: 20px;
+      border-radius: 14px; 
+      box-shadow: 0 0 20px var(--glow-color); 
+      border: 1px solid var(--gray-light); 
+    }
+
+    #contact form { display: flex; flex-direction: column; gap: 12px; }
+    #contact input, #contact textarea { 
+      padding: 12px;
+      border: none; 
+      border-radius: 8px; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      background: rgba(68,68,68,0.5); 
+      color: #fff; 
+      box-shadow: 0 0 10px var(--glow-color);
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+    #contact input:focus, #contact textarea:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 8px rgba(0,184,148,0.3);
+    }
+    #contact textarea { resize: vertical; min-height: 140px; }
+    #contact button { 
+      background: var(--secondary-color); 
+      color: #fff; 
+      font-weight: 700; 
+      border: none; 
+      padding: 10px 14px;
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-size: 1rem; 
+      transition: transform .25s, box-shadow .25s, opacity .25s; 
+    }
+    #contact button:hover { 
+      transform: translateY(-3px); 
+      box-shadow: 0 6px 18px rgba(0,0,0,.2); 
+    }
+    #contact .error { color: #fff; font-size: .95rem; font-weight: 700; display: none; }
+    #contact .success-message { display: none; color: #fff; font-size: 1.05rem; font-weight: 700; text-align: center; font-family: 'Orbitron', sans-serif; }
+
+    #contact .contact-info { color: #fff; font-size: 1.05rem; font-weight: 600; display: flex; flex-direction: column; gap: 10px; }
+    #contact .contact-info h3 { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; margin-bottom: 6px; }
+    #contact .contact-info a { color: #fff; text-decoration: none; }
+    #contact .contact-info a:hover { color: var(--accent-color); }
+
+    /* Footer - Full width */
+    footer { 
+      width: 100%;
+      background: linear-gradient(90deg, #000, #111); 
+      color: #fff; 
+      text-align: center; 
+      padding: 30px 15px;
+      display: flex; 
+      flex-direction: column; 
+      gap: 14px; 
+      opacity: 0; 
+      transform: translateY(40px); 
+      transition: opacity .6s ease, transform .6s ease; 
+    }
+    footer.visible { opacity: 1; transform: translateY(0); }
+    footer .social a { 
+      color: #fff; 
+      margin: 0 10px; 
+      font-size: 1.4rem; 
+      transition: transform .25s, color .25s; 
+    }
+    footer .social a:hover { 
+      color: var(--accent-color); 
+      transform: scale(1.2); 
+    }
+
+    /* Back to Top */
+    .back-to-top { 
+      position: fixed; 
+      bottom: 22px; 
+      right: 22px; 
+      background: var(--secondary-color); 
+      color: #fff; 
+      width: 48px; 
+      height: 48px; 
+      display: grid; 
+      place-items: center; 
+      border-radius: 50%; 
+      cursor: pointer; 
+      opacity: 0; 
+      transition: opacity .25s, transform .25s; 
+      z-index: 1000; 
+    }
+    .back-to-top.visible { opacity: 1; }
+    .back-to-top:hover { transform: scale(1.1); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      header { padding: 3px 5px; height: 82px; }
+      .menu-toggle { display: block; }
+      nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #111; padding: 14px 0; }
+      nav.active { display: block; }
+      nav a { display: block; margin: 6px 9px; font-size: 0.85rem; }
+      
+      .slider { 
+        height: calc(100vh - 82px);
+      }
+      
+      #contact .contact-container { 
+        grid-template-columns: 1fr; 
+        padding: 40px 15px;
+      }
+      
+      .gallery-slide { flex: 0 0 100%; min-width: 100%; }
+      .slide-caption { font-size: 2rem; }
+      .slide-subcaption { font-size: 1.2rem; }
+      
+      .content-container {
+        padding: 40px 15px;
+      }
+      
+      .parallax { height: 80vh; }
+      .parallax-content { font-size: 1.8rem; }
+      .gallery-carousel.show-all .gallery-slide {
+        flex: 0 0 50%;
+        min-width: 50%;
+      }
+      .carousel-nav {
+        top: auto;
+        bottom: 10px;
+        right: 10px;
+        flex-direction: row;
+      }
+    }
+
+    @media (min-width: 901px) and (max-width: 1200px) {
+      .gallery-slide { flex: 0 0 33.33%; min-width: 33.33%; }
+      .gallery-carousel.show-all .gallery-slide {
+        flex: 0 0 33.33%;
+        min-width: 33.33%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="images/logo11.png" alt="Biobuild Logo" style="height: 80px; width: auto;" />
+    </div>
+    <nav>
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+  </header>
+
+  <!-- Home Slider (Full screen) -->
+  <section id="home" class="slider">
+    <div class="slide active">
+      <img class="slide-media" src="images/home 1.png" alt="Slide 1" />
+      <div class="content"></div>
+    </div>
+    <div class="slide">
+      <img class="slide-media" src="images/home 2.png" alt="Slide 2" />
+      <div class="content"></div>
+    </div>
+    <div class="slide">
+      <img class="slide-media" src="images/home3.jpg" alt="Slide 3" />
+      <div class="content"></div>
+    </div>
+    <div class="slide">
+      <img class="slide-media" src="images/home 4.png" alt="Slide 4" />
+      <div class="content"></div>
+    </div>
+    <div class="slider-arrows">
+      <button class="prev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+      <button class="next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="slider-controls" aria-label="Slider dots"></div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="content-container">
+      <h2>About Us</h2>
+      <p>
+        The Wills Homes Limited has a vision to make living with the best possible standard of features and finishing
+        with a feel of nature and green—safe and comfortable to its best. The structural engineer has designed the
+        reinforced concrete frame structure following the guidelines stated in the Bangladesh National Building Code (BNBC).
+        The building is capable of withstanding the code‑specified natural forces like earthquake and wind.
+      </p>
+    </div>
+  </section>
+
+  <!-- Parallax (Full screen) -->
+  <div class="parallax" style="background-image: url('images/ABOUT US.png');">
+    <div class="parallax-content">Committed to Sustainability and Innovation</div>
+  </div>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="content-container">
+      <h2>Projects</h2>
+      <div class="filter-buttons">
+        <button data-filter="ongoing" class="active">Ongoing</button>
+        <button data-filter="upcoming">Upcoming</button>
+        <button data-filter="hand-over">Hand-Over</button>
+        
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item ongoing" data-full="images/project photo 1.jpg">
+          <div class="image-container">
+            <img src="images\Project11.jpg" alt="Ongoing Project 1" />
+            <div class="overlay">THE WILLS TOWER  (SHANTINAGAR)</div>
+          </div>
+          <div class="download-section">
+            <a href="pdfs/ongoing_project1.pdf" download class="download-btn">Download Brochure (PDF)</a>
+          </div>
+        </div>
+        <div class="gallery-item ongoing" data-full="images\project photo 2.png">
+          <div class="image-container">
+            <img src="images\project22.jpg" alt="Ongoing Project 1" />
+            <div class="overlay">THE WILLS ROSE (BASHUNDHARA R/A)</div>
+          </div>
+          <div class="download-section">
+            <a href="pdfs/ongoing_project1.pdf" download class="download-btn">Download Brochure (PDF)</a>
+          </div>
+        </div>
+        <div class="gallery-item hand-over" data-full="images\Project photo 4.png">
+          <div class="image-container">
+            <img src="images\Project photo 4.png" alt="Hand-Over Project 1" />
+            <div class="overlay">Hand-Over Project 1 — Business Excellence</div>
+          </div>
+          <div class="download-section">
+            <a href="pdfs/handover_project1.pdf" download class="download-btn">Download Brochure (PDF)</a>
+          </div>
+        </div>
+        <div class="gallery-item upcoming" data-full="images/Project photo 3.png">
+          <div class="image-container">
+            <img src="images/Project photo 3.png" alt="Upcoming Project 1" />
+            <div class="overlay">Upcoming Project 1 — Harmony with Nature</div>
+          </div>
+          <div class="download-section">
+            <a href="pdfs/upcoming_project1.pdf" download class="download-btn">Download Brochure (PDF)</a>
+          </div>
+        </div>
+        <div class="gallery-item ongoing" data-full="images\project photo 3.png">
+          <div class="image-container">
+            <img src="images\project photo 3 - Copy.png" alt="Ongoing Project 2" />
+            <div class="overlay">Ongoing Project 2 — Elegant Homes</div>
+          </div>
+          <div class="download-section">
+            <a href="pdfs/ongoing_project2.pdf" download class="download-btn">Download Brochure (PDF)</a>
+          </div>
+        </div>
+        <div class="gallery-item hand-over" data-full="images\Project photo 5.png">
+          <div class="image-container">
+            <img src="images\Project photo 5.png" alt="Hand-Over Project 2" />
+            <div class="overlay">Hand-Over Project 2 — Innovative Workspaces</div>
+          </div>
+          <div class="download-section">
+            <a href="pdfs/handover_project2.pdf" download class="download-btn">Download Brochure (PDF)</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery">
+    <div class="content-container">
+      <h2>Gallery</h2>
+      <div class="gallery-carousel">
+        <div class="gallery-track">
+          <div class="gallery-slide" data-full="images/home 2.png">
+            <img src="images/home 2.png" alt="Gallery Image 1" />
+          </div>
+          <div class="gallery-slide" data-full="images/home 2.png">
+            <img src="images/home 2.png" alt="Gallery Image 2" />
+          </div>
+          <div class="gallery-slide" data-full="images/home3.jpg">
+            <img src="images/home3.jpg" alt="Gallery Image 3" />
+          </div>
+          <div class="gallery-slide" data-full="images/home 4.png">
+            <img src="images/home 4.png" alt="Gallery Image 4" />
+          </div>
+          <div class="gallery-slide" data-full="images/project photo 1.jpg">
+            <img src="images/project photo 1.jpg" alt="Gallery Image 5" />
+          </div>
+          <div class="gallery-slide" data-full="images/project photo 2.png">
+            <img src="images/project photo 2.png" alt="Gallery Image 6" />
+          </div>
+          <div class="gallery-slide" data-full="images/project photo 3.png">
+            <img src="images/project photo 3.png" alt="Gallery Image 7" />
+          </div>
+          <div class="gallery-slide" data-full="images/Project photo 4.png">
+            <img src="images/Project photo 4.png" alt="Gallery Image 8" />
+          </div>
+          <div class="gallery-slide" data-full="images/Project photo 5.png">
+            <img src="images/Project photo 5.png" alt="Gallery Image 9" />
+          </div>
+          <div class="gallery-slide" data-full="images/logo11.png">
+            <img src="images/logo11.png" alt="Gallery Image 10" />
+          </div>
+        </div>
+        <div class="carousel-nav">
+          <button class="carousel-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+          <button class="carousel-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="gallery-buttons">
+        <button class="view-all">View All</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" role="dialog" aria-modal="true">
+    <span class="lightbox-close" aria-label="Close"><i class="fas fa-times"></i></span>
+    <button class="lightbox-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+    <button class="lightbox-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+    <img src="" alt="Lightbox Image" />
+  </div>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="content-container">
+      <h2>Contact Us</h2>
+      <div class="contact-container">
+        <form id="contact-form" data-tilt data-tilt-max="15" data-tilt-speed="500" data-tilt-perspective="1200">
+          <input type="text" id="name" placeholder="Your Name" required />
+          <span class="error" id="name-error">Please enter your name</span>
+          <input type="email" id="email" placeholder="Your Email" required />
+          <span class="error" id="email-error">Please enter a valid email</span>
+          <textarea id="message" placeholder="Your Message" required></textarea>
+          <span class="error" id="message-error">Please enter a message</span>
+          <button type="submit">Send Message</button>
+          <p class="success-message">Message Sent Successfully!</p>
+        </form>
+        <div class="contact-info" data-tilt data-tilt-max="15" data-tilt-speed="500" data-tilt-perspective="1200">
+          <h3>Get in Touch</h3>
+          <p><i class="fas fa-map-marker-alt"></i> <a href="https://www.google.com/maps/place/SEL+Trident+Tower/@23.732166,90.412863,17z/data=!3m1!4b1!4m5!3m4!1s0x0:0x0!8m2!3d23.732166!4d90.412863" target="_blank" rel="noreferrer noopener">SEL Trident Tower, Level‑13, Suite‑1302, 57 Purana Paltan, VIP Rd, Dhaka 1000</a></p>
+          <p><i class="fas fa-phone"></i> <a href="tel:+880222229588">02‑222229588</a></p>
+          <p><i class="fas fa-phone"></i> <a href="tel:+8801787661709">01787 661709</a></p>
+          <p><i class="fas fa-phone"></i> <a href="tel:+8801894922303">01894922303</a></p>
+          <p><i class="fas fa-envelope"></i> <a href="mailto:thewillshomes@gmail.com">thewillshomes@gmail.com</a></p>
+          <p><i class="fab fa-facebook-f"></i> <a href="https://www.facebook.com/profile.php?id=61575785190435" target="_blank" rel="noreferrer noopener">Follow us on Facebook</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="social">
+      <a href="https://www.facebook.com/profile.php?id=61575785190435" target="_blank" rel="noreferrer noopener"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+    <p>&copy; 2025 TheWillsHome Development Ltd. All rights reserved.</p>
+  </footer>
+
+  <!-- Back to Top -->
+  <div class="back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></div>
+
+  <script>
+    // EmailJS init (replace with your actual EmailJS public key)
+    (function(){ try { emailjs.init("YOUR_PUBLIC_KEY"); } catch(e) {} })();
+
+    // Mobile Menu Toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+    menuToggle.addEventListener('click', () => {
+      nav.classList.toggle('active');
+      menuToggle.innerHTML = nav.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    });
+
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+      document.querySelector('header').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    // Slider logic (smooth fade transition with dynamic height)
+    const slides = document.querySelectorAll('.slide');
+    const sliderControls = document.querySelector('.slider-controls');
+    const prevBtn = document.querySelector('.prev');
+    const nextBtn = document.querySelector('.next');
+    let currentSlide = 0;
+    let isHoveringSlider = false;
+
+    function buildDots() {
+      slides.forEach((_, index) => {
+        const btn = document.createElement('button');
+        if (index === 0) btn.classList.add('active');
+        btn.addEventListener('click', () => goToSlide(index));
+        sliderControls.appendChild(btn);
+      });
+    }
+
+    function setActive(index) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[index].classList.add('active');
+      const dots = sliderControls.querySelectorAll('button');
+      dots.forEach(d => d.classList.remove('active'));
+      dots[index].classList.add('active');
+    }
+
+    function goToSlide(index) {
+      const newIndex = (index + slides.length) % slides.length;
+      if (newIndex === currentSlide) return;
+
+      const slider = document.querySelector('.slider');
+      const currentImg = slides[currentSlide].querySelector('.slide-media');
+      slider.style.height = `${currentImg.offsetHeight}px`;
+
+      setActive(newIndex);
+
+      const newImg = slides[newIndex].querySelector('.slide-media');
+      slider.style.height = `${newImg.offsetHeight}px`;
+
+      currentSlide = newIndex;
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    function updateSliderHeight() {
+      const slider = document.querySelector('.slider');
+      const activeImg = document.querySelector('.slide.active .slide-media');
+      if (activeImg) {
+        slider.style.height = `${activeImg.offsetHeight}px`;
+      }
+    }
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    buildDots();
+    updateSliderHeight();
+
+    let autoSlide = setInterval(() => { if (!isHoveringSlider) nextSlide(); }, 4000);
+
+    const sliderEl = document.querySelector('.slider');
+    sliderEl.addEventListener('mouseenter', () => { isHoveringSlider = true; });
+    sliderEl.addEventListener('mouseleave', () => { isHoveringSlider = false; });
+
+    window.addEventListener('load', updateSliderHeight);
+    window.addEventListener('resize', updateSliderHeight);
+
+    // Intersection animations and nav highlight
+    const sections = document.querySelectorAll('section, .parallax, footer');
+    const navLinks = document.querySelectorAll('nav a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          const id = entry.target.id;
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          });
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+
+    sections.forEach(sec => observer.observe(sec));
+
+    // Gallery filter
+    const filterButtons = document.querySelectorAll('.filter-buttons button');
+    const allGalleryItems = document.querySelectorAll('.gallery-item');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        const filter = button.dataset.filter;
+        allGalleryItems.forEach(item => {
+          const show = filter === 'all' || item.classList.contains(filter);
+          item.style.display = show ? 'block' : 'none';
+          if (show) {
+            item.classList.remove('visible');
+            void item.offsetWidth;
+            item.classList.add('visible');
+          }
+        });
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const defaultButton = document.querySelector('#projects .filter-buttons button.active');
+      if (defaultButton) {
+        defaultButton.click();
+      }
+    });
+
+    // Gallery Carousel
+    const carousel = document.querySelector('.gallery-carousel');
+    const track = document.querySelector('.gallery-track');
+    const slidesCount = track.querySelectorAll('.gallery-slide').length;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let isDragging = false;
+    const slideWidth = 20;
+
+    track.style.transform = `translateX(0%)`;
+
+    carousel.addEventListener('mousedown', dragStart);
+    carousel.addEventListener('touchstart', dragStart);
+    carousel.addEventListener('mousemove', dragAction);
+    carousel.addEventListener('touchmove', dragAction);
+    carousel.addEventListener('mouseup', dragEnd);
+    carousel.addEventListener('touchend', dragEnd);
+    carousel.addEventListener('mouseleave', dragEnd);
+
+    const carouselPrev = document.querySelector('.carousel-prev');
+    const carouselNext = document.querySelector('.carousel-next');
+
+    function dragStart(e) {
+      if (carousel.classList.contains('show-all')) return;
+      e.preventDefault();
+      if (e.type === 'touchstart') {
+        startX = e.touches[0].clientX;
+      } else {
+        startX = e.clientX;
+      }
+      isDragging = true;
+      track.classList.add('dragging');
+    }
+
+    function dragAction(e) {
+      if (!isDragging) return;
+      let currentX;
+      if (e.type === 'touchmove') {
+        currentX = e.touches[0].clientX;
+      } else {
+        currentX = e.clientX;
+      }
+      const diffX = (currentX - startX) / carousel.offsetWidth * 100;
+      currentTranslate = prevTranslate + diffX;
+      setSliderPosition();
+    }
+
+    function dragEnd() {
+      isDragging = false;
+      track.classList.remove('dragging');
+      prevTranslate = currentTranslate;
+      const maxTranslate = - (slidesCount - 5) * slideWidth;
+      if (currentTranslate > 0) currentTranslate = 0;
+      if (currentTranslate < maxTranslate) currentTranslate = maxTranslate;
+      prevTranslate = currentTranslate;
+      setSliderPosition();
+    }
+
+    function setSliderPosition() {
+      track.style.transform = `translateX(${currentTranslate}%)`;
+    }
+
+    function slideNext() {
+      const maxTranslate = - (slidesCount - 5) * slideWidth;
+      currentTranslate -= slideWidth;
+      if (currentTranslate < maxTranslate) currentTranslate = maxTranslate;
+      prevTranslate = currentTranslate;
+      setSliderPosition();
+    }
+
+    function slidePrev() {
+      currentTranslate += slideWidth;
+      if (currentTranslate > 0) currentTranslate = 0;
+      prevTranslate = currentTranslate;
+      setSliderPosition();
+    }
+
+    carouselPrev.addEventListener('click', slidePrev);
+    carouselNext.addEventListener('click', slideNext);
+
+    // Lightbox
+    const lightbox = document.querySelector('.lightbox');
+    const lightboxImg = lightbox.querySelector('img');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    const lightboxPrev = document.querySelector('.lightbox-prev');
+    const lightboxNext = document.querySelector('.lightbox-next');
+    const allLightboxItems = document.querySelectorAll('.gallery-item, .gallery-slide');
+    const gallerySlides = document.querySelectorAll('.gallery-slide');
+    const galleryImages = Array.from(gallerySlides).map(slide => slide.getAttribute('data-full'));
+    let currentLightboxIndex = 0;
+    let isSlideshow = false;
+
+    function openLightbox(src, index = -1) {
+      lightboxImg.src = src;
+      if (index !== -1) {
+        isSlideshow = true;
+        currentLightboxIndex = index;
+        lightboxPrev.style.display = 'block';
+        lightboxNext.style.display = 'block';
+      } else {
+        isSlideshow = false;
+        lightboxPrev.style.display = 'none';
+        lightboxNext.style.display = 'none';
+      }
+      lightbox.classList.add('active');
+    }
+
+    allLightboxItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const fullSrc = item.getAttribute('data-full') || item.querySelector('img').src;
+        openLightbox(fullSrc);
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      lightboxImg.src = '';
+    }
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+    lightboxPrev.addEventListener('click', () => {
+      if (!isSlideshow) return;
+      currentLightboxIndex = (currentLightboxIndex - 1 + galleryImages.length) % galleryImages.length;
+      lightboxImg.src = galleryImages[currentLightboxIndex];
+    });
+
+    lightboxNext.addEventListener('click', () => {
+      if (!isSlideshow) return;
+      currentLightboxIndex = (currentLightboxIndex + 1) % galleryImages.length;
+      lightboxImg.src = galleryImages[currentLightboxIndex];
+    });
+
+    // Gallery Buttons
+    const viewAll = document.querySelector('.view-all');
+
+    viewAll.addEventListener('click', () => {
+      carousel.classList.toggle('show-all');
+      viewAll.textContent = carousel.classList.contains('show-all') ? 'Collapse Gallery' : 'View All';
+    });
+
+    // Contact form validation + EmailJS send
+    const form = document.getElementById('contact-form');
+    const submitBtn = form.querySelector('button');
+    const successMessage = form.querySelector('.success-message');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      let isValid = true;
+
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const message = document.getElementById('message');
+      const nameError = document.getElementById('name-error');
+      const emailError = document.getElementById('email-error');
+      const messageError = document.getElementById('message-error');
+
+      [nameError, emailError, messageError].forEach(err => err.style.display = 'none');
+      successMessage.style.display = 'none';
+
+      if (!name.value.trim()) { nameError.style.display = 'block'; isValid = false; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) { emailError.style.display = 'block'; isValid = false; }
+      if (!message.value.trim()) { messageError.style.display = 'block'; isValid = false; }
+
+      if (isValid) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = 0.7;
+
+        const templateParams = {
+          from_name: name.value.trim(),
+          from_email: email.value.trim(),
+          message: message.value.trim(),
+          to_email: 'thewillshomes@gmail.com'
+        };
+
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+          .then(() => {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = 1;
+            successMessage.style.display = 'block';
+            form.reset();
+            setTimeout(() => { successMessage.style.display = 'none'; }, 3000);
+          })
+          .catch(() => {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = 1;
+            alert('Failed to send message. Please try again later.');
+          });
+      }
+    });
+
+    // Back to Top
+    const backToTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => { backToTop.classList.toggle('visible', window.scrollY > 300); });
+    backToTop.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+    // VanillaTilt init
+    VanillaTilt.init(document.querySelectorAll('#contact form, #contact .contact-info'), { max: 15, speed: 500, perspective: 1200, glare: true, 'max-glare': 0.25 });
+  </script>
+</body>
+</html>
